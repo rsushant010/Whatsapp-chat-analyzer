@@ -1,28 +1,34 @@
 from urlextract import URLExtract
-
-def fetch_num_msg(selected_user, data):
-    if selected_user == "Overall":
-        return data.shape[0]
-
-    else:
-        return data[data["User"] == selected_user].shape[0]
+from wordcloud import WordCloud
+import string
+from collections import Counter
+import pandas as pd
 
 
-def fetch_words(selected_user, df):
-    words = []
-    if selected_user != "Overall":
-        df = df[df["User"] == selected_user]
+def n():
+    # def fetch_num_msg(selected_user, data):
+    #     if selected_user == "Overall":
+    #         return data.shape[0]
 
-        for message in df["Messages"]:
-            words.extend(message.split())
+    #     else:
+    #         return data[data["User"] == selected_user].shape[0]
 
-        return len(words)
 
-    else:
-        for message in df["Messages"]:
-            words.extend(message.split())
-        return len(words)
-    
+    # def fetch_words(selected_user, df):
+    #     words = []
+    #     if selected_user != "Overall":
+    #         df = df[df["User"] == selected_user]
+
+    #         for message in df["Messages"]:
+    #             words.extend(message.split())
+
+    #         return len(words)
+
+    #     else:
+    #         for message in df["Messages"]:
+    #             words.extend(message.split())
+    #         return len(words)
+    pass
 
 def fetch_stats(selected_user,df):
     if selected_user != "Overall":
@@ -52,4 +58,59 @@ def fetch_stats(selected_user,df):
 
     return num_msg , len(words), media_omitted_count , len(urls)
         
+
+
+# group level analysis finding busiest user
+def busy_user(df):
+    # top 5 user stored in x 
+    x = df['User'].value_counts().head()
+
+    df = round((df['User'].value_counts()/df.shape[0])*100 , 2).reset_index().rename(columns = {"count": "Percentage"})
+
+    return x,df
+
+# method for most common words
+
+def common_words(selected_user,df):
+
+    if selected_user != "Overall":
+        df = df[df["User"] == selected_user]
+
+    # removing group notification
+    temp = df[df['User'] != 'group_notification']
+    # removing media ommited message
+    temp = temp[~temp['Messages'].str.contains('<Media omitted>', na=False)].reset_index()
+
+    word_list = []
+
+    try:
+        f = open('stop_hinglish.txt' , 'r')
+        stop_words = f.read()
+
+        for text in temp["Messages"]:
+            for word in text.lower().split():
+                # checking for stopwords and punctuation
+                if word not in stop_words and word not in string.punctuation:
+                    word_list.append(word)
+
+    except Exception as e:
+        raise RuntimeError("An error occurred") from e
+    
+    return_df = pd.DataFrame(Counter(word_list).most_common(20))
+    
+    return  return_df, temp
+
+
+# method to create wordcloud
+def wc_generator(df):
+
+    wc = WordCloud(width=300,height=300,min_font_size=10,background_color='white')
+
+    # word cloud will be formed from messages column in df where 
+
+    wc_df = wc.generate(df["Messages"].str.cat(sep = " "))
+
+    # .str.cat(sep=" "): This method concatenates all strings in the column into a single string, using the separator specified by sep. In this case, sep=" " means that each string will be separated by a space.
+
+    return wc_df
 

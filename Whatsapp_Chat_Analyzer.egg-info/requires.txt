@@ -3,7 +3,3 @@ pandas
 urlextract
 matplotlib
 wordcloud
-
-
--e .
-

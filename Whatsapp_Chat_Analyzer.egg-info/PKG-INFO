@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: Whatsapp-Chat-Analyzer
+Version: 0.0.1
+Author: sushant
+Author-email: rsushant441@gmail.com
+Requires-Dist: streamlit
+Requires-Dist: pandas
+Requires-Dist: urlextract
+Requires-Dist: matplotlib
+Requires-Dist: wordcloud
