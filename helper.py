@@ -3,6 +3,7 @@ from wordcloud import WordCloud
 import string
 from collections import Counter
 import pandas as pd
+import emoji
 
 
 def n():
@@ -53,9 +54,6 @@ def fetch_stats(selected_user,df):
 
         urls.extend(extractor.find_urls(message))
     
-
-
-
     return num_msg , len(words), media_omitted_count , len(urls)
         
 
@@ -69,7 +67,9 @@ def busy_user(df):
 
     return x,df
 
-# method for most common words
+
+
+# method for most common words and emojis
 
 def common_words(selected_user,df):
 
@@ -82,6 +82,7 @@ def common_words(selected_user,df):
     temp = temp[~temp['Messages'].str.contains('<Media omitted>', na=False)].reset_index()
 
     word_list = []
+    emoji_list = []
 
     try:
         f = open('stop_hinglish.txt' , 'r')
@@ -93,12 +94,18 @@ def common_words(selected_user,df):
                 if word not in stop_words and word not in string.punctuation:
                     word_list.append(word)
 
+                # checking for emojis present in data
+                if word in emoji.EMOJI_DATA:
+                    emoji_list.extend(word)
+
+
     except Exception as e:
         raise RuntimeError("An error occurred") from e
     
-    return_df = pd.DataFrame(Counter(word_list).most_common(20))
+    return_df_word = pd.DataFrame(Counter(word_list).most_common(20))
+    return_df_emoji = pd.DataFrame(Counter(emoji_list).most_common(20))
     
-    return  return_df, temp
+    return  return_df_word, return_df_emoji, temp
 
 
 # method to create wordcloud
@@ -114,3 +121,35 @@ def wc_generator(df):
 
     return wc_df
 
+
+
+# method to create lineplot showing their activeness in group or text
+
+def activity_timeline(selected_user , df):
+
+    if selected_user != "Overall":
+        df = df[df["User"] == selected_user]
+
+    
+    timeline = df.groupby(["Month","Month_num","Year"]).count()["Messages"].reset_index()
+    timeline = timeline.sort_values(by = ["Year","Month_num"]).reset_index(drop = True)
+    timeline['Year'] = timeline['Year'].astype(str)
+    timeline['Time'] = timeline['Month'] + "-" + timeline['Year']
+
+    return timeline
+
+
+def activity_count(selected_user , df):
+    if selected_user != "Overall":
+        df = df[df["User"] == selected_user]
+
+    monthly_index = df["Month"].value_counts().index
+    monthly_values = df["Month"].value_counts().values
+
+    weekly_index = df["Week_Day"].value_counts().index
+    weekly_values = df["Week_Day"].value_counts().values
+
+    return  weekly_index, weekly_values , monthly_index, monthly_values
+
+
+    

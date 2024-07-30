@@ -18,7 +18,9 @@ if uploaded_file is not None:
     # st.text(data)
 
     df = preprocessor.preprocess(data)
-    st.dataframe(df)
+    # st.dataframe(df)
+    # there is no need to print the dataframe
+
 
 # fetching users in chat/data
     userList = df['User'].unique().tolist()
@@ -32,6 +34,7 @@ if uploaded_file is not None:
     if st.sidebar.button("Show Analysis"):
         num_stats, word_stats, media_stats, url_stats = helper.fetch_stats(selected_user,df)
          
+        st.title("Top Statistics")
         col1, col2, col3, col4 = st.columns([1.2,1,1,1])
         # values inside these braces are the width of column respectively 
 
@@ -80,31 +83,90 @@ if uploaded_file is not None:
             # st.dataframe(new_df)
 
 
+
+# displaying monthly activeness [we are not using temp_df as then we will not include media omitted but they are also important in our analysis]
+
+        timeline = helper.activity_timeline(selected_user,df)
+        
+# weekly and monthly activity plot
+
+        st.title("Monthly Timeline")
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(timeline['Time'], timeline['Messages'], marker='o', linestyle='-', color='r')
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Messages')
+        ax.set_title('Messages Over Time')
+        ax.tick_params(axis='x', rotation=90)  # Rotate x-axis labels for better readability
+        # ax.grid(True)
+
+        st.pyplot(fig) 
+
+
+# plotting weekly and monthly activity
+        st.title("Activity Map")
+        col1 , col2 = st.columns(2)
+        weekly_index, weekly_values , monthly_index, monthly_values = helper.activity_count(selected_user,df)
+        
+        with col1:
+            st.title("Most Busy Day")
+            fig, ax = plt.subplots()
+            ax.bar(weekly_index, weekly_values)
+            ax.tick_params(axis='x', rotation=90)  # Rotate x-axis labels for better readability
+            st.pyplot(fig)
+
+        with col2:
+            st.title("Most Busy Month")
+            fig, ax = plt.subplots()
+            ax.bar(monthly_index, monthly_values, color = "orange")
+            ax.tick_params(axis='x', rotation=90)  # Rotate x-axis labels for better readability
+            st.pyplot(fig)
+
+
+
 # getting updated dataframe and top word list
-        common_word_df,updated_df = helper.common_words(selected_user,df)
+# temp_df is the dataframe without media omitted values in it
+        common_word_df,common_emoji_df,temp_df = helper.common_words(selected_user,df)
+
 
 
 # creating wordcloud
-        wc_img = helper.wc_generator(updated_df)
+        wc_img = helper.wc_generator(temp_df)
 
-        fig,axes = plt.subplots()
+        st.title("Wordcloud")
+        fig,axes = plt.subplots(figsize = (4,6))
         # axes.imshow displays the previously generated image or graph
         axes.imshow(wc_img)
 
         st.pyplot(fig)
 
+
 # plotting mostcommon words
         # st.dataframe(common_word_df)
         fig,ax = plt.subplots()
 
-        ax.barh(common_word_df[0],common_word_df[1])
+        ax.barh(common_word_df[0],common_word_df[1],color = "darksalmon")
         plt.xticks(rotation = 'vertical')
 
         st.title("Most Common Words")
         st.pyplot(fig)
 
-        
-        
-            
 
-                
+# displaying most common emojis and plotting 
+        st.title('Emojis List and Plot')
+        col1, col2 = st.columns([1,3] , vertical_alignment="bottom")
+
+        with col1:
+            st.dataframe(common_emoji_df)
+
+        with col2:
+            fig,ax = plt.subplots()
+
+            # ax.pie(common_emoji_df[1][:10], labels=common_emoji_df[0][:10], autopct="%0.2f")
+            # st.pyplot(fig)
+
+            ax.barh(common_emoji_df[0],common_emoji_df[1])
+            plt.xticks(rotation = 'vertical')
+            st.pyplot(fig)
+
+       
+

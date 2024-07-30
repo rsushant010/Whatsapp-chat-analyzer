@@ -16,6 +16,13 @@ def preprocess(data):
     datetime = pd.to_datetime(datetime, format='%m/%d/%y %I:%M %p')
 
     # creating dataframe
+    len_df =  len(messages) - len(datetime) 
+    if len_df >0:
+        messages = messages[len_df:]
+
+    elif len_df < 0:
+        datetime = datetime[-len_df:]
+
     df = pd.DataFrame({'DateTime': datetime, 'Messages': messages})
 
     # function to extract name and chat
@@ -43,9 +50,10 @@ def preprocess(data):
     df['Min'] = df['DateTime'].dt.minute
     df['Month'] = df['DateTime'].dt.month_name()
     df['Year'] = df['DateTime'].dt.year
-
+    df["Week_Day"] = df["DateTime"].dt.strftime('%A')
+    df["Month_num"] = df["DateTime"].dt.month
     # reordering all the columns
-    neworder = ['Day', 'Month', 'Year', 'Hour', 'Min', 'DateTime', 'User', 'Messages']
+    neworder = ['DateTime', 'User', 'Messages','Day', 'Month_num', 'Year', 'Hour', 'Min','Week_Day','Month']
     df = df.reindex(columns=neworder)
 
     return df
