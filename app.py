@@ -4,24 +4,33 @@ import matplotlib.pyplot as plt
 
 
 
+DEFAULT_DATASET_PATH = 'WhatsApp Chat with PPC ( PCC Proper Cricket club).txt'
+
 st.sidebar.title("Whatsapp Chat Analyzer")
 
-uploaded_file = st.sidebar.file_uploader("Choose a file")
-if uploaded_file is not None:
-    # To read file as bytes:
-    bytes_data = uploaded_file.getvalue()
+# File uploader widget
+uploaded_file = st.sidebar.file_uploader("Choose a text file")
 
-    # using utf-8 decoding
+if uploaded_file is None:
+    # Use default dataset if no file is uploaded
+    with open(DEFAULT_DATASET_PATH, 'r', encoding='utf-8') as file:
+        data = file.read()
+
+# Check if a file is uploaded
+elif uploaded_file is not None:
+    # Read file as bytes
+    bytes_data = uploaded_file.getvalue()
+    # Decode bytes to string
     data = bytes_data.decode('utf-8')
+
 
     # shows all the data in text format
     # st.text(data)
-
-    df = preprocessor.preprocess(data)
+df = preprocessor.preprocess(data)
     # st.dataframe(df)
     # there is no need to print the dataframe
 
-
+if df is not None:
 # fetching users in chat/data
     userList = df['User'].unique().tolist()
     userList.remove('group_notification')
@@ -108,14 +117,14 @@ if uploaded_file is not None:
         weekly_index, weekly_values , monthly_index, monthly_values = helper.activity_count(selected_user,df)
         
         with col1:
-            st.title("Most Busy Day")
+            st.title("Busy Days")
             fig, ax = plt.subplots()
             ax.bar(weekly_index, weekly_values)
             ax.tick_params(axis='x', rotation=90)  # Rotate x-axis labels for better readability
             st.pyplot(fig)
 
         with col2:
-            st.title("Most Busy Month")
+            st.title("Busy Months")
             fig, ax = plt.subplots()
             ax.bar(monthly_index, monthly_values, color = "orange")
             ax.tick_params(axis='x', rotation=90)  # Rotate x-axis labels for better readability
@@ -127,46 +136,53 @@ if uploaded_file is not None:
 # temp_df is the dataframe without media omitted values in it
         common_word_df,common_emoji_df,temp_df = helper.common_words(selected_user,df)
 
+        
 
-
+         
 # creating wordcloud
-        wc_img = helper.wc_generator(temp_df)
+        if common_word_df.shape[0] > 0 and temp_df.shape[0] > 0:
+            wc_img = helper.wc_generator(temp_df)
 
-        st.title("Wordcloud")
-        fig,axes = plt.subplots(figsize = (4,6))
-        # axes.imshow displays the previously generated image or graph
-        axes.imshow(wc_img)
+            st.title("Wordcloud")
+            fig,axes = plt.subplots(figsize = (4,6))
+            # axes.imshow displays the previously generated image or graph
+            axes.imshow(wc_img)
 
-        st.pyplot(fig)
+            st.pyplot(fig)
 
 
 # plotting mostcommon words
         # st.dataframe(common_word_df)
-        fig,ax = plt.subplots()
-
-        ax.barh(common_word_df[0],common_word_df[1],color = "darksalmon")
-        plt.xticks(rotation = 'vertical')
-
-        st.title("Most Common Words")
-        st.pyplot(fig)
-
-
-# displaying most common emojis and plotting 
-        st.title('Emojis List and Plot')
-        col1, col2 = st.columns([1,3] , vertical_alignment="bottom")
-
-        with col1:
-            st.dataframe(common_emoji_df)
-
-        with col2:
             fig,ax = plt.subplots()
 
-            # ax.pie(common_emoji_df[1][:10], labels=common_emoji_df[0][:10], autopct="%0.2f")
-            # st.pyplot(fig)
-
-            ax.barh(common_emoji_df[0],common_emoji_df[1])
+            ax.barh(common_word_df[0],common_word_df[1],color = "darksalmon")
             plt.xticks(rotation = 'vertical')
+
+            st.title("Most Common Words")
             st.pyplot(fig)
 
+        else :
+            st.title("No Words Found")
+
+# displaying most common emojis and plotting 
+        if common_emoji_df.shape[0] > 0:
+            st.title('Common Emojis List and Plot')
+            col1, col2 = st.columns([1,3] , vertical_alignment="bottom")
+
+            with col1:
+                st.dataframe(common_emoji_df)
+
+            with col2:
+                fig,ax = plt.subplots()
+
+                # ax.pie(common_emoji_df[1][:10], labels=common_emoji_df[0][:10], autopct="%0.2f")
+                # st.pyplot(fig)
+
+                ax.barh(common_emoji_df[0],common_emoji_df[1])
+                plt.xticks(rotation = 'vertical')
+                st.pyplot(fig)
+
+        else :
+            st.title("No Emojis Found")
        
 
