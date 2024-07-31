@@ -3,6 +3,7 @@ pandas
 urlextract
 matplotlib
 wordcloud
+emoji
 
 
 -e .
