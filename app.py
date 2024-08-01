@@ -162,7 +162,7 @@ if df is not None:
             st.pyplot(fig)
 
         else :
-            st.title("No Words Found")
+            st.title("Not Suffiecient Words Found to Plot WordCloud")
 
 # displaying most common emojis and plotting 
         if common_emoji_df.shape[0] > 0:
