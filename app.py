@@ -1,9 +1,7 @@
 import homepage,preprocessor,helper,word_level_analysis
 import streamlit as st
-
-
-
-
+    
+# setting default path for text file
 DEFAULT_DATASET_PATH = 'WhatsApp Chat with PPC ( PCC Proper Cricket club).txt'
 
 st.sidebar.title("Whatsapp Chat Analyzer")
@@ -36,5 +34,8 @@ df = preprocessor.preprocess(data)
 # calling function to make webpage interactive
 if df is not None:
     homepage.homepage(df)
+
+
+    
     
 

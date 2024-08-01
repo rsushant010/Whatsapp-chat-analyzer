@@ -97,10 +97,17 @@ def backend(selected_user,df):
 # displaying the dataframe
         st.title("Message Data Frame")
         if selected_user != "Overall":
-          user_df = df[df['User'] == selected_user]
-          st.dataframe(user_df)
+            user_df = df[df['User'] == selected_user].reset_index(drop=True)
         else:
-            st.dataframe(df)
+            user_df = df.reset_index(drop=True)
+
+        # Adjust the index to start from 1
+        user_df.index += 1
+
+        # Display the DataFrame with the modified index
+        st.dataframe(user_df)
+
+        
 # getting updated dataframe and top word list
 # temp_df is the dataframe without media omitted values in it
         common_word_df,common_emoji_df,temp_df = helper.common_words(selected_user,df)
