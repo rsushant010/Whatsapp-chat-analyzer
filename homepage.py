@@ -15,7 +15,7 @@ def show_intro_page():
 
         This app lets you:
         - **Upload** a text file of your chat.
-        - Perform **word-level analysis** to gain insights.
+        - Perform **upto word-level analysis** to gain insights.
 
         To proceed, click the **"Proceed"** button below.
 
