@@ -140,7 +140,7 @@ if df is not None:
 
          
 # creating wordcloud
-        if common_word_df.shape[0] > 0 and temp_df.shape[0] > 0:
+        if common_word_df.shape[0] > 1 and temp_df.shape[0] > 1:
             wc_img = helper.wc_generator(temp_df)
 
             st.title("Wordcloud")
