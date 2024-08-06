@@ -1,5 +1,5 @@
 import streamlit as st
-import homepage,preprocessor,helper,word_level_analysis
+import homepage2,preprocessor,helper,word_level_analysis
 
 
 def backend():
@@ -37,5 +37,5 @@ def backend():
 
         # calling function to make webpage interactive
         if df is not None:
-            homepage.homepage(df)
+            homepage2.homepage(df)
 

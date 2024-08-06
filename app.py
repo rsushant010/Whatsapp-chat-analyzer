@@ -1,4 +1,4 @@
-import homepage,preprocessor,helper,word_level_analysis,hpage2
+import homepage2,preprocessor,helper,word_level_analysis,homepage1
 import streamlit as st
 
 
@@ -8,7 +8,7 @@ st.set_page_config(page_title="Whatsapp Chat Analyzer", page_icon=":bar_chart:",
 # Check if the page state is set to "NextPage"
 if st.session_state.get("page") == "NextPage":
     # Call the backend function
-    hpage2.backend()
+    homepage1.backend()
 else:
     # Header section
     st.title("Welcome to the Whatsapp Chat Analysis Homepage")
