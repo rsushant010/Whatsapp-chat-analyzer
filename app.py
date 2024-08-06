@@ -1,39 +1,41 @@
-import homepage,preprocessor,helper,word_level_analysis
+import homepage,preprocessor,helper,word_level_analysis,hpage2
 import streamlit as st
-    
-# setting default path for text file
-DEFAULT_DATASET_PATH = 'WhatsApp Chat with PPC ( PCC Proper Cricket club).txt'
-
-st.sidebar.title("Whatsapp Chat Analyzer")
-
-# File uploader widget
-uploaded_file = st.sidebar.file_uploader("Choose a text file")
-
-# file uploading here
-
-if uploaded_file is None:
-    # Use default dataset if no file is uploaded
-    with open(DEFAULT_DATASET_PATH, 'r', encoding='utf-8') as file:
-        data = file.read()
-
-# Check if a file is uploaded
-elif uploaded_file is not None:
-    # Read file as bytes
-    bytes_data = uploaded_file.getvalue()
-    # Decode bytes to string
-    data = bytes_data.decode('utf-8')
 
 
-    # shows all the data in text format
-    # st.text(data)
-df = preprocessor.preprocess(data)
-    # st.dataframe(df)
-    # there is no need to print the dataframe
+# Set page configuration
+st.set_page_config(page_title="Whatsapp Chat Analyzer", page_icon=":bar_chart:", layout="wide")
+
+# Check if the page state is set to "NextPage"
+if st.session_state.get("page") == "NextPage":
+    # Call the backend function
+    hpage2.backend()
+else:
+    # Header section
+    st.title("Welcome to the Whatsapp Chat Analysis Homepage")
+    st.markdown(
+        """
+        **Get started with analyzing your WhatsApp chat data!**
+
+        This app lets you:
+        - **Upload** a text file of your chat.
+        - Perform **upto word-level analysis** to gain insights by entering word in search box.
+
+        To proceed, click the **"Proceed"** button below.
+
+        **How it works:**
+        1. Upload your chat file.
+        2. Click **"Proceed"** to start the analysis.
+        3. **"If you do not want to upload a file then you can get analysis on a demo data(study group) uploaded already"**.
+
+        """
+    )
 
 
-# calling function to make webpage interactive
-if df is not None:
-    homepage.homepage(df)
+    # Add a button to proceed
+    if st.button("Proceed Further"):
+        st.session_state.page = "NextPage"  # Set the page to the next one
+        st.rerun()  # Rerun the app to reflect the changes
+
 
 
     

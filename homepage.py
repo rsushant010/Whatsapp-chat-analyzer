@@ -4,43 +4,8 @@ import matplotlib.pyplot as plt
 
 
 import streamlit as st
-
-def show_intro_page():
     
-    st.title("Welcome to the WhatsApp Chat Analysis App")
-
-    st.markdown(
-        """
-        **Get started with analyzing your WhatsApp chat data!**
-
-        This app lets you:
-        - **Upload** a text file of your chat.
-        - Perform **upto word-level analysis** to gain insights.
-
-        To proceed, click the **"Proceed"** button below.
-
-        **How it works:**
-        1. Upload your chat file.
-        2. Click **"Proceed"** to start the analysis.
-
-        """
-    )
-    if st.button("Proceed"):
-        # Set a flag in session state to indicate that the intro page has been seen
-        st.session_state.show_intro = False
-        # Use st.experimental_rerun to reload the app and display the analysis page
-        st.experimental_rerun()
-
-# Initialize session state if it does not exist
-if 'show_intro' not in st.session_state:
-    st.session_state.show_intro = True
-
-# Reset the intro page flag on each reload
-if st.session_state.show_intro:
-    show_intro_page()
-
-
-
+    
 def homepage(df):
     # fetching users in chat/data
     userList = df['User'].unique().tolist()
