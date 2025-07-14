@@ -81,7 +81,9 @@ def common_words(selected_user,df):
     # removing group notification
     temp = df[df['User'] != 'group_notification']
     # removing media ommited message
-    temp = temp[~temp['Messages'].str.contains('<Media omitted>', na=False)].reset_index()
+    # temp = temp[~temp['Messages'].str.contains('<Media omitted>', na=False)].reset_index()
+    temp = temp[~temp['Messages'].astype(str).str.contains('<Media omitted>', na=False)].reset_index(drop=True)
+
 
     word_list = []
     emoji_list = []
