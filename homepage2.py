@@ -7,12 +7,20 @@ import streamlit as st
 
 
 
+# def homepage(df):
+#     # fetching users in chat/data
+#     userList = df['User'].unique().tolist()
+#     userList.remove('mm')
+#     userList.sort()
+#     userList.insert(0,"Overall")
+
 def homepage(df):
     # fetching users in chat/data
     userList = df['User'].unique().tolist()
-    # userList.remove('group_notification')
+    if 'group_notification' in userList:
+        userList.remove('group_notification')
     userList.sort()
-    userList.insert(0,"Overall")
+    userList.insert(0, "Overall")
 
 # getting the value selected from drop down menu
     selected_user  = st.sidebar.selectbox('Get analysis for : ',userList)
