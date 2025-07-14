@@ -16,9 +16,13 @@ import streamlit as st
 
 def homepage(df):
     # fetching users in chat/data
+    
     userList = df['User'].unique().tolist()
-    if 'group_notification' in userList:
-        userList.remove('group_notification')
+    userList = [user for user in userList if user.lower() != 'group_notification']   
+    
+    # if 'group_notification' in userList:
+    
+    userList.remove('group_notification')
     userList.sort()
     userList.insert(0, "Overall")
 
