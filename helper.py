@@ -42,7 +42,7 @@ def fetch_stats(selected_user,df):
     words = []
     
     # finding number of media shared
-    media_omitted_count = df['Messages'].str.contains('<Media omitted>', na=False).sum()
+    # media_omitted_count = df['Messages'].str.contains('<Media omitted>', na=False).sum()
     media_omitted_count = df['Messages'].astype(str).str.contains('<Media omitted>', na=False).sum()
 
 
